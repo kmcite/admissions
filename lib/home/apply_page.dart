@@ -1,46 +1,58 @@
-import 'package:admissions/home/apply_page_bloc.dart';
-import 'package:admissions/navigation.dart';
+import 'dart:async';
+
+import 'package:admissions/db_actions.dart';
+import 'package:admissions/extensions.dart';
+import 'package:admissions/main.dart';
 import 'package:admissions/programs/programs.dart';
+import 'package:async_redux/async_redux.dart';
+import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
-import 'package:manager/manager.dart';
 
-final applyPageBloc = ApplyPageBloc();
+// final applyPageBloc = ApplyPageBloc();
 
-class ApplyPage extends UI {
-  @override
-  void didMountWidget(BuildContext context) {
-    applyPageBloc.load();
-  }
+// class LoadApplyPageAction extends AppAction {
+//   @override
+//   FutureOr<StateTree> reduce() async {
+//     return state..application = Program();
+//   }
+// }
 
-  @override
-  void didUnmountWidget() {
-    applyPageBloc.unload();
-  }
+class ApplyPage extends StatelessWidget {
+  // void didMountWidget(BuildContext context) {
+  //   applyPageBloc.load();
+  // }
+
+  // void didUnmountWidget() {
+  //   applyPageBloc.unload();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return FScaffold(
       header: FHeader(
         title: Text("Apply Page"),
-        actions: [
-          FHeaderAction.back(onPress: navigator.pop),
+        suffixes: [
+          FHeaderAction.back(
+            onPress: () => dispatch(Navigate.pop()),
+          ),
         ],
       ),
-      content: Column(
+      child: Column(
         children: [
           FTileGroup(
-            children: programsRM.programs.map(
+            children: context.state.programs.map(
               (program) {
                 return FTile(
-                  title: program.name.text(),
+                  title: Text(program.name),
                   subtitle: FButton(
-                    onPress: applyPageBloc.isAlreadyApplied(program)
+                    onPress:
+                        context.state.authentication.isAlreadyApplied(program)
                         ? null
                         : () {
-                            applyPageBloc.apply(program);
+                            context.dispatch(ApplyAction(program));
                           },
-                    label: 'Apply'.text(),
-                  ).pad(),
+                    child: Text('Apply'),
+                  ),
                 );
               },
             ).toList(),
@@ -48,5 +60,15 @@ class ApplyPage extends UI {
         ],
       ),
     );
+  }
+}
+
+class ApplyAction extends AppAction {
+  final Program program;
+  ApplyAction(this.program);
+  @override
+  FutureOr<void> after() {
+    final user = state.authentication.user;
+    dispatch(Put(user?..programs.add(program)));
   }
 }

@@ -1,0 +1,128 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:7921616601747497635",
+      "lastPropertyId": "6:142164315650130750",
+      "name": "Program",
+      "properties": [
+        {
+          "id": "1:4533999654364926756",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3581968683899267061",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:2737126932153794040",
+          "name": "category",
+          "type": 9
+        },
+        {
+          "id": "4:7918003514796020674",
+          "name": "description",
+          "type": 9
+        },
+        {
+          "id": "5:3538380349880036662",
+          "name": "editing",
+          "type": 1
+        },
+        {
+          "id": "6:142164315650130750",
+          "name": "fees",
+          "type": 6
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:7050458213461410191",
+          "name": "applicants",
+          "targetId": "2:4471815993768337905"
+        }
+      ]
+    },
+    {
+      "id": "2:4471815993768337905",
+      "lastPropertyId": "10:4872331494486906791",
+      "name": "User",
+      "properties": [
+        {
+          "id": "1:2647843429122930378",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6525710342345634105",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:7363062978476946989",
+          "name": "email",
+          "type": 9
+        },
+        {
+          "id": "4:4220583770545314617",
+          "name": "password",
+          "type": 9
+        },
+        {
+          "id": "5:8488591836272135695",
+          "name": "educations",
+          "type": 9
+        },
+        {
+          "id": "6:6898282076625673772",
+          "name": "experiences",
+          "type": 9
+        },
+        {
+          "id": "7:2403273909876709062",
+          "name": "phoneNumber",
+          "type": 9
+        },
+        {
+          "id": "8:7980883481467864143",
+          "name": "dateOfBirth",
+          "type": 10
+        },
+        {
+          "id": "9:162892024970831789",
+          "name": "highSchool",
+          "type": 9
+        },
+        {
+          "id": "10:4872331494486906791",
+          "name": "gpa",
+          "type": 8
+        }
+      ],
+      "relations": [
+        {
+          "id": "2:3325372730888395724",
+          "name": "programs",
+          "targetId": "1:7921616601747497635"
+        }
+      ]
+    }
+  ],
+  "lastEntityId": "2:4471815993768337905",
+  "lastIndexId": "0:0",
+  "lastRelationId": "2:3325372730888395724",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

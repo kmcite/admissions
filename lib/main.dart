@@ -1,38 +1,56 @@
-import 'package:admissions/authentication/login_page.dart';
-import 'package:forui/forui.dart';
-import 'package:manager/collection.dart';
-export 'package:manager/database.dart';
-export 'package:manager/manager.dart';
-import 'main.dart';
-import 'navigation.dart';
+import 'dart:async';
 
-void main() async {
+import 'package:admissions/authentication/authentication_screen.dart';
+import 'package:admissions/extensions.dart';
+import 'package:admissions/home/home_page.dart';
+import 'package:admissions/state_tree.dart';
+import 'package:async_redux/async_redux.dart';
+import 'package:flutter/material.dart';
+import 'package:yaru/yaru.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
+
+final store = Store<StateTree>(
+  initialState: StateTree(),
+  actionObservers: [Log.printer(formatter: Log.verySimpleFormatter)],
+);
+
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Model.initialize();
-  runApp(const AdmissionsApp());
+
+  NavigateAction.setNavigatorKey(navigatorKey);
+
+  runApp(
+    StoreProvider(
+      store: store..dispatch(LoadDependenciesAction()),
+      child: const AdmissionsApp(),
+    ),
+  );
 }
 
-class AdmissionsApp extends UI {
+class AdmissionsApp extends StatelessWidget {
   const AdmissionsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: navigator.key,
+      navigatorKey: NavigateAction.navigatorKey,
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
-      builder: (context, child) => FTheme(
-        data: FThemes.slate.dark,
-        child: child!,
-      ),
-      home: AuthenticationPage(),
+      theme: yaruLight,
+      darkTheme: yaruDark,
+      home: context.isWaiting(LoadDependenciesAction)
+          ? Center(child: YaruCircularProgressIndicator())
+          : context.state.authentication.isLoggedIn
+          ? HomePage()
+          : AuthenticationScreen(),
     );
   }
 }
 
-extension Put<T> on Injected<T> {
-  void put(T value) {
-    state = value;
-    notify();
-  }
+abstract class AppAction extends ReduxAction<StateTree> {
+  @override
+  FutureOr<StateTree> reduce() async => state;
 }
+
+typedef Navigate = NavigateAction<StateTree>;

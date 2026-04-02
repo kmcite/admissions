@@ -4,3 +4,7 @@ analyzer:
     library_private_types_in_public_api: ignore
     invalid_use_of_protected_member: ignore
     invalid_use_of_visible_for_testing_member: ignore
+
+formatter:
+  trailing_commas: preserve
+    

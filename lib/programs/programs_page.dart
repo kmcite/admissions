@@ -1,59 +1,73 @@
+import 'package:admissions/db_actions.dart';
+import 'package:admissions/extensions.dart';
 import 'package:admissions/main.dart';
-import 'package:admissions/navigation.dart';
 import 'package:admissions/programs/programs.dart';
+import 'package:async_redux/async_redux.dart';
+import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
-class ProgramsPage extends UI {
+class ProgramsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FScaffold(
       header: FHeader(
-        title: 'PROGRAMS'.text(),
-        actions: [
-          FHeaderAction.back(onPress: navigator.pop),
+        title: Text('PROGRAMS'),
+        suffixes: [
+          FHeaderAction.back(
+            onPress: () {
+              dispatch(Navigate.pop());
+            },
+          ),
         ],
       ),
-      content: programsRM.programs.isEmpty
+      child: context.state.programs.isEmpty
           ? FLabel(
               axis: Axis.vertical,
-              child: 'No programs yet'.text(),
+              child: Text('No programs yet'),
             )
           : FTileGroup.builder(
-              count: programsRM.count(),
+              count: context.state.programs.length,
               tileBuilder: (context, index) {
-                final program = programsRM.programs.elementAt(index);
+                final program = context.state.programs.elementAt(index);
                 return FTile(
                   title: program.editing
-                      ? FTextField(
-                          initialValue: program.name,
-                          onChange: (value) {
-                            programsRM.put(program..name = value);
-                          },
+                      ? FTextFormField(
+                          control: .lifted(
+                            value: TextEditingValue(text: program.name),
+                            onChange: (value) {
+                              context.dispatch(Put(program..name = value.text));
+                            },
+                          ),
                         )
-                      : program.name.text(),
+                      : Text(program.name),
                   subtitle: program.editing
-                      ? FTextField(
-                          initialValue: program.description,
-                          onChange: (value) {
-                            programsRM.put(program..description = value);
-                          },
+                      ? FTextFormField(
+                          control: .lifted(
+                            value: TextEditingValue(text: program.description),
+                            onChange: (tev) {
+                              context.dispatch(
+                                Put(program..description = tev.text),
+                              );
+                            },
+                          ),
                         )
-                      : program.description.text(),
-                  details: program.fees.text(),
-                  prefixIcon: FCheckbox(
+                      : Text(program.description),
+                  details: Text(program.fees.toString()),
+                  prefix: FCheckbox(
                     value: program.editing,
-                    onChange: (value) =>
-                        programsRM.put(program..editing = value),
+                    onChange: (value) {
+                      context.dispatch(Put(program..editing = value));
+                    },
                   ),
                 );
               },
             ),
       footer: FButton(
         onPress: () {
-          programsRM.put(Program());
+          context.dispatch(Put(Program()));
         },
-        label: 'Create a program'.text(),
-      ).pad(),
+        child: Text('Create a program'),
+      ),
     );
   }
 }

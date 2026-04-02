@@ -1,9 +1,12 @@
-import 'package:admissions/applications/my_applications_bloc.dart';
+import 'package:admissions/db_actions.dart';
+import 'package:admissions/extensions.dart';
 import 'package:admissions/main.dart';
-import 'package:admissions/navigation.dart';
+import 'package:admissions/users/user_profile/user_actions.dart';
+import 'package:async_redux/async_redux.dart';
+import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 
-class MyApplicationsPage extends UI {
+class MyApplicationsPage extends StatelessWidget {
   const MyApplicationsPage({super.key});
 
   @override
@@ -11,33 +14,46 @@ class MyApplicationsPage extends UI {
     return FScaffold(
       header: FHeader(
         title: Text('My Applications'),
-        actions: [
+        suffixes: [
           FHeaderAction.back(
-            onPress: () => navigator.pop(),
-          )
+            onPress: () {
+              dispatch(Navigate.pop());
+            },
+          ),
         ],
       ),
-      content: appliedProgramsRM.appliedPrograms.isEmpty
-          ? FLabel(axis: Axis.vertical, child: 'No applications'.text())
+      child: context.state.authentication.user?.programs.isEmpty ?? true
+          ? FLabel(axis: Axis.vertical, child: Text('No applications'))
           : FTileGroup.builder(
-              count: appliedProgramsRM.appliedPrograms.length,
+              count: context.state.authentication.user!.programs.length,
               tileBuilder: (context, index) {
-                final application =
-                    appliedProgramsRM.appliedPrograms.elementAt(index);
+                final application = context.state.authentication.user!.programs
+                    .elementAt(index);
                 return FTile(
-                  prefixIcon: FIcon(FAssets.icons.apple),
+                  prefix: Icon(FIcons.apple),
                   title: FTextField(
                     key: Key(application.id.toString()),
-                    description: application.name.text(),
+                    description: Text(application.name),
                     label: Text('application'),
-                    initialValue: application.name,
-                    onChange: (value) {},
+                    control: .lifted(
+                      value: TextEditingValue(text: application.name),
+                      onChange: (value) {
+                        dispatch(Put(application..name = value.text));
+                      },
+                    ),
                   ),
-                  suffixIcon: FButton.icon(
+                  suffix: FButton.icon(
                     onPress: () {
-                      appliedProgramsRM.cancel(application);
+                      context.state.authentication.user?.programs.remove(
+                        application,
+                      );
+                      dispatch(
+                        UserProgramsChanged(
+                          context.state.authentication.user!.programs,
+                        ),
+                      );
                     },
-                    child: FIcon(FAssets.icons.delete),
+                    child: Icon(FIcons.delete),
                   ),
                 );
               },

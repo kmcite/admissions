@@ -1,79 +1,95 @@
-import 'package:admissions/authentication/authentication_bloc.dart';
+import 'package:admissions/authentication/authentication.dart';
+import 'package:admissions/extensions.dart';
 import 'package:admissions/home/apply_page.dart';
 import 'package:admissions/main.dart';
-import 'package:admissions/navigation.dart';
-import 'package:admissions/users/users_page.dart';
+import 'package:admissions/users/other_applicants.dart';
+import 'package:async_redux/async_redux.dart';
+import 'package:flutter/material.dart';
 import 'package:forui/forui.dart';
 import '../applications/my_applications_page.dart';
 import '../programs/programs_page.dart';
 import '../users/user_profile/user_profile_page.dart';
 
-// 📌 AppBar (Header)
-// Keep the title and action buttons, but add a profile picture instead of a generic icon.
-// Display user name & email for personalization.
-// 📌 Dashboard Sections
-// 👉 (A) Quick Actions (Two Large Buttons)
-
-// "Apply Now" (Primary CTA – Make it stand out in color and size)
-// "My Applications" (Quick access to submitted applications)
-// 👉 (B) Information Cards (Two-Column Layout)
-
-// Latest News (Scrollable list inside a card)
-// Upcoming Events (Show deadlines in a list format with icons)
-// 👉 (C) Featured & Social (Two-Column Layout)
-
-// Featured Programs (Carousel of top programs)
-// Other Students (Display a grid of avatars with names)
-
-class HomePage extends UI {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FScaffold(
       header: FHeader(
         title: const Text('Admissions'),
-        actions: [
+        suffixes: [
           FButton.icon(
             onPress: () {
-              navigator.pushWidget(UserProfilePage());
+              dispatch(
+                Navigate.push(
+                  MaterialPageRoute(
+                    builder: (context) => UserProfilePage(),
+                  ),
+                ),
+              );
             },
-            child: FIcon(FAssets.icons.user),
+            child: Icon(FIcons.user),
           ),
           FButton.icon(
-            child: FIcon(FAssets.icons.logOut),
-            onPress: () => authenticationBloc.logout(),
-          )
+            child: Icon(FIcons.logOut),
+            onPress: () {
+              dispatch(LogoutAction());
+            },
+          ),
         ],
       ),
-      content: Column(
+      child: Column(
+        spacing: 8,
         children: [
           FBadge(
-            label: (authenticationBloc.user?.name).text(),
-          ).pad(),
+            child: Text(context.state.authentication.user?.name ?? ''),
+          ),
           FBadge(
-            label: (authenticationBloc.user?.email).text(),
-          ).pad(),
+            child: Text(context.state.authentication.user?.email ?? ''),
+          ),
           FButton(
-            prefix: FIcon(FAssets.icons.panelRightOpen),
-            label: Text('APPLY NOW'),
-            onPress: () => navigator.pushWidget(ApplyPage()),
-          ).pad(),
-          FButton(
-            prefix: FIcon(FAssets.icons.appWindowMac),
-            label: Text("MY APPLICATIONS"),
-            onPress: () => navigator.pushWidget(
-              MyApplicationsPage(),
+            prefix: Icon(FIcons.panelRightOpen),
+            child: Text('APPLY NOW'),
+            onPress: () => dispatch(
+              Navigate.push(
+                MaterialPageRoute(
+                  builder: (context) => ApplyPage(),
+                ),
+              ),
             ),
-          ).pad(),
+          ),
           FButton(
-            prefix: FIcon(FAssets.icons.asterisk),
-            label: Text('PROGRAMS AND COURSES'),
-            onPress: () => navigator.pushWidget(ProgramsPage()),
-          ).pad(),
+            prefix: Icon(FIcons.appWindowMac),
+            child: Text("MY APPLICATIONS"),
+            onPress: () => dispatch(
+              Navigate.push(
+                MaterialPageRoute(
+                  builder: (context) => MyApplicationsPage(),
+                ),
+              ),
+            ),
+          ),
           FButton(
-            prefix: FIcon(FAssets.icons.pointer),
-            label: Text('OTHER APPLICANTS'),
-            onPress: () => navigator.pushWidget(UsersPage()),
-          ).pad(),
+            prefix: Icon(FIcons.asterisk),
+            child: Text('PROGRAMS AND COURSES'),
+            onPress: () => dispatch(
+              Navigate.push(
+                MaterialPageRoute(
+                  builder: (context) => ProgramsPage(),
+                ),
+              ),
+            ),
+          ),
+          FButton(
+            prefix: Icon(FIcons.pointer),
+            child: Text('OTHER APPLICANTS'),
+            onPress: () => dispatch(
+              Navigate.push(
+                MaterialPageRoute(
+                  builder: (context) => OtherApplicants(),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

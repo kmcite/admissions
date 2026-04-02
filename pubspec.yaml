@@ -4,7 +4,7 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ^3.6.0
+  sdk: ^3.10.0
 
 dependencies:
   flutter:
@@ -12,11 +12,17 @@ dependencies:
   cupertino_icons: ^1.0.2
   path: ^1.9.0
   path_provider: ^2.1.5
-  manager:
-    path: ..//manager
+  # manager:
+  #   path: ..//manager
   forui:
   build_runner: 
   package_info_plus:
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
+  objectbox: ^5.2.0
+  objectbox_generator: ^5.2.0
+  objectbox_flutter_libs: ^5.2.0
+  async_redux: ^26.4.2
+  shared_preferences: ^2.5.4
+  yaru: ^9.0.1
 flutter:
   uses-material-design: true
